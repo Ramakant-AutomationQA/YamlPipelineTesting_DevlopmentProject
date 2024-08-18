@@ -6,33 +6,27 @@
 trigger:
 - master
 pool:
-  vmImage: windows-latest
-steps:
-- task: Maven@4
-  inputs:
-    mavenPomFile: 'YamlPipelineTesting_DevlopmentProject/pom.xml'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    testRunTitle: 'JuintTest'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.11'
-    mavenVersionOption: 'Default'
-    mavenAuthenticateFeed: true
-    effectivePomSkip: true
-    sonarQubeRunAnalysis: false
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: '$(System.DefaultWorkingDirectory)'
-    Contents: '**/*.jar'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    CleanTargetFolder: true
-    OverWrite: true
-    flattenFolders: true
-    preserveTimestamp: true
-    retryCount: '1'
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
-    MaxArtifactSize: 100
+  vmImage: Default
+
+stages:
+  - stage: Build
+    displayName: BuildStage
+    jobs:
+      - job: Build
+        displayName: BuildMavenProject
+        steps:
+          - task: Maven@1
+            displayName: 'Maven Package'
+            inputs:
+              mavenPomFile: 'YamlPipelineTesting_DevlopmentProject/pom.xml'
+              goals: 'package'
+          - task: CopyFiles@2
+            displayName: 'Copy files to artifact staging directory'
+            inputs:
+              SourceFolder: '$(System.DefaultWorkingDirectory)'
+              Contents: '**/target/*.?(war|jar)'
+              TargetFolder: $(Build.ArtifactStagingDirectory)
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: $(Build.ArtifactStagingDirectory)
+              ArtifactName: SampleDevApplication  
