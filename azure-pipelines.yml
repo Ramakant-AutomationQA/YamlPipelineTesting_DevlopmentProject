@@ -8,7 +8,7 @@ trigger:
 pool:
   vmImage: windows-latest
 steps:
-- task: @1
+- task: PackerBuild@0
   inputs:
     mavenPomFile: 'YamlPipelineTesting_DevlopmentProject/pom.xml'
     publishJUnitResults: true
