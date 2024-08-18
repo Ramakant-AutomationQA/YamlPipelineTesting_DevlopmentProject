@@ -5,12 +5,10 @@
 
 trigger:
 - master
-
 pool:
   vmImage: windows-latest
-
 steps:
-- task: Maven@3
+- task: PowerShell@1
   inputs:
     mavenPomFile: 'YamlPipelineTesting_DevlopmentProject/pom.xml'
     publishJUnitResults: true
